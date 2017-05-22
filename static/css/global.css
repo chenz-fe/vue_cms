@@ -1,9 +1,11 @@
 body {
     background-color: white;
+    font-size: 14px;
 }
 
 .tmpl {
     margin-bottom: 50px;
+    margin-top: 40px;
 }
 
 .news-content img {

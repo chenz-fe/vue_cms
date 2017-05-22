@@ -47,6 +47,7 @@ module.exports = {
         new htmlWebpackPlugin({
             template: './src/index.html',
         }),
+        // 处理vue开发环境的控制台提示，告知vue当前是生产环境
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: '"production"'

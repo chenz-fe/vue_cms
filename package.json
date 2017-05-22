@@ -28,6 +28,7 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
+    "axios": "^0.16.1",
     "mint-ui": "^2.2.3",
     "moment": "^2.18.1",
     "uglify-es": "github:mishoo/UglifyJS2#harmony",
