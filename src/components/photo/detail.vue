@@ -8,44 +8,68 @@
 			<span>分类：民生经济</span>
 		</div>
 		<ul class="mui-table-view mui-grid-view mui-grid-9">
-			<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" v-for="(pic, index) in pics" :key="index">
-				<img :src="pic.img" height="100">
+			<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" v-for="(item, index) in pics" :key="index">
+				<img class="preview-img" :src="item.src" height="100" @click="$preview.open(index, pics)">
 			</li>
 		</ul>
+
 		<div class="photo-desc">
 			<p v-html="msg.content"></p>
 		</div>
 
 		<!-- 评论组件 -->
-		<comment></comment>
+		<comment :cid="this.$route.query.id"></comment>
 	</div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 	export default {
 		data() {
 			return {
 				msg: {},
 				pics: []
-
 			}
 		},
 		created() {
 			// 合并请求：获取图片详情及详情中的缩略图数组
+			// let id = this.$route.query.id;
+			// this.axios.all([
+			// 	this.axios.get('getimageInfo/' + id),
+			// 	this.axios.get('getthumimages/' + id)
+			// ])
+			// .then(this.axios.spread((res1, res2)=>{
+			// 	this.msg = res1.data.message[0];
+			// 	// console.log(this.msg);
+			// 	this.pics = res2.data.message;
+			// 	// console.log(this.pics);
+			// 	for (var i = 0; i < this.pics.length; i++) {
+			// 		this.pics[i].w = 300;
+			// 		this.pics[i].h = 300;
+			// 	}
+			// }))
+			// .catch(err=>{
+			// 	console.log('获取图片详情失败');
+			// })
+			
+			// 规定请求顺序：先获取图片详情，再获取缩略图中的数组
 			let id = this.$route.query.id;
-			this.axios.all([
-				this.axios.get('getimageInfo/' + id),
-				this.axios.get('getthumimages/' + id)
-			])
-			.then(this.axios.spread((res1, res2)=>{
-				this.msg = res1.data.message[0];
-				// console.log(this.msg);
-				this.pics = res2.data.message;
+			this.axios.get('getimageInfo/' + id)
+			.then(res=>{
+				this.msg = res.data.message[0];
+				return this.axios.get('getthumimages/' + id)
+			})
+			.then(res=>{
+				this.pics = res.data.message;
 				// console.log(this.pics);
-			}))
+				for (var i = 0; i < this.pics.length; i++) {
+					this.pics[i].w = 300;
+					this.pics[i].h = 300;
+				}
+			})
 			.catch(err=>{
 				console.log('获取图片详情失败');
-			})
+			});
+
 		}
 	}
 </script>
@@ -99,6 +123,6 @@
 	}
 
 	.mui-table-view-cell.mui-media.mui-col-xs-4.mui-col-sm-3 {
-		padding: 2 2;
+		padding: 2px;
 	}
 </style>

@@ -2,6 +2,12 @@ import Vue from 'vue';
 import MintUi from 'mint-ui';
 import 'mint-ui/lib/style.css';
 import VueRouter from 'vue-router';
+import VuePreview from 'vue-preview';
+
+// 安装插件
+Vue.use(MintUi);
+Vue.use(VueRouter);
+Vue.use(VuePreview);
 
 // 引入css
 import '../static/render/mui/dist/css/mui.css';
@@ -23,6 +29,16 @@ Vue.component('comment', Comment);
 // 引入axios, 配置基础路径，将其挂载在Vue实例的原型上
 import Axios from 'axios';
 Axios.defaults.baseURL = 'http://webhm.top:8899/api/';
+Axios.defaults.headers.post = {
+    'content-type': 'application/x-www-form-urlencoded'
+};
+Axios.defaults.transformRequest = function(data) {
+    var str = '';
+    for (var key in data) {
+        str += key + '=' + data[key] + '&';
+    }
+    return str.substr(0, str.length - 1);
+};
 Vue.prototype.axios = Axios;
 
 // 引入moment插件(不需要安装)
@@ -44,10 +60,6 @@ const NewsDetail = r => require(['./components/news/detail.vue'], r);
 const PhotoShare = r => require(['./components/photo/share.vue'], r);
 const PhotoDetail = r => require(['./components/photo/detail.vue'], r);
 
-
-// 安装插件
-Vue.use(MintUi);
-Vue.use(VueRouter);
 
 // 设置导航按钮点击高亮样式
 let router = new VueRouter({

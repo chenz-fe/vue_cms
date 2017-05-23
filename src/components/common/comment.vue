@@ -10,7 +10,7 @@
                 </div>
             </li>
             <li class="txt-comment">
-                <textarea></textarea>
+                <textarea v-model="newComment"></textarea>
             </li>
             <li>
                 <mt-button type="primary" size="large" @click="postComment">发表评论</mt-button>
@@ -18,22 +18,17 @@
             <li class="photo-comment">
                 <div>
                     <span>评论列表</span>
-                    <span>44条评论</span>
+                    <span>{{comments.length}}条评论</span>
                 </div>
             </li>
         </ul>
         <ul class="comment-list">
-            <li>
-                匿名用户1：大家好 2014-01-04
-            </li>
-            <li>
-                匿名用户1：大家好 2014-01-04
-            </li>
-            <li>
-                匿名用户1：大家好 2014-01-04
+            <li v-for="(item, index) in comments" :key="index">
+                <span>{{item.user_name}}: {{item.content}} </span>
+                <span>{{item.add_time | format_date}}</span>
             </li>
         </ul>
-        <mt-button plain type="danger" size="large">加载更多</mt-button>
+        <mt-button plain type="danger" size="large" @click="loadmore">加载更多</mt-button>
     </div>
 
 </template>
@@ -41,15 +36,59 @@
     export default {
         data() {
             return {
-
+                pageindex: 1,
+                comments: [],
+                newComment: ''
             }
         },
+        props: ['cid'],
         created() {
-            
+            // 默认加载第一页的评论
+            this.loadmore();
+            // console.log(this.$props.cid);
+            // let url = '/getcomments/'+this.$props.cid+'?pageindex=1';
+            // this.axios.get(url)
+            // .then(res=>{
+            //     this.comments = res.data.message;
+            //     console.log(res.data);
+            // })
+            // .catch(err=>{
+            //     console.log('获取评论数据失败');
+            // })
+
         },
         methods: {
             goback() {
                 this.$router.go(-1);
+            },
+            loadmore() {
+                let url = '/getcomments/'+this.$props.cid+'?pageindex='+this.pageindex;
+                this.axios.get(url)
+                .then(res=>{
+                    this.pageindex++;
+                    this.comments = this.comments.concat(res.data.message);
+                })
+                .catch(err=>{
+                    console.log('加载更多评论失败');
+                })
+            },
+            postComment() {
+                this.axios({
+                    method: 'post',
+                    url: 'postcomment/'+this.$props.cid,
+                    data: {content: this.newComment}
+                })
+                .then(res=>{
+                    // console.log(res);
+                    this.comments = [];
+                    this.pageindex = 1;
+                    this.loadmore();
+                    // 清空输入框
+                    this.newComment = '';
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
             }
         }
     }
@@ -72,6 +111,10 @@
         margin-bottom: 5px;
     }
 
+    .photo-comment span {
+        margin-right: 10px;
+    }
+
     .txt-comment {
         padding: 5 5;
     }
@@ -85,6 +128,11 @@
         padding-bottom: 5px;
         margin-bottom: 5px;
         padding-left: 5px;
+    }
+    
+    .comment-list li span:nth-child(2) {
+        float: right;
+        margin-right: 10px;
     }
 
     li {
