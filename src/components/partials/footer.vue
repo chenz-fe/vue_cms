@@ -12,7 +12,7 @@
 			</router-link>
 
 			<router-link to='/shopcart' class="mui-tab-item">
-				<span class="mui-icon mui-icon-shopcart"><span class="mui-badge">9</span></span>
+				<span class="mui-icon mui-icon-shopcart"><span class="mui-badge" ref="shopcartNum">{{buyNum}}</span></span>
 				<span class="mui-tab-label">购物车</span>
 			</router-link>
 			<router-link to='/search' class="mui-tab-item">
@@ -25,10 +25,22 @@
 </template>
 
 <script type="text/ecmascript-6">
+
+	import MyBus from '../common/myBus.js';
+
 	export default {
 		data() {
-			return {};
+			return {
+				buyNum:0
+			};
+		},
+		created() {
+			MyBus.$on('buyNumChange', (num)=>{
+				this.buyNum += num;
+			})
 		}
+		
+
 	}
 
 </script>

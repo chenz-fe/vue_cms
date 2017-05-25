@@ -33,6 +33,7 @@
 
 </template>
 <script>
+    import { Indicator } from 'mint-ui';
     export default {
         data() {
             return {
@@ -73,6 +74,12 @@
                 })
             },
             postComment() {
+                // 数据加载样式
+                Indicator.open({
+                  text: '加载中...',
+                  spinnerType: 'fading-circle'
+                });
+
                 this.axios({
                     method: 'post',
                     url: 'postcomment/'+this.$props.cid,
@@ -83,6 +90,7 @@
                     this.comments = [];
                     this.pageindex = 1;
                     this.loadmore();
+                    Indicator.close();
                     // 清空输入框
                     this.newComment = '';
                 })

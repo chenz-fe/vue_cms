@@ -1,13 +1,8 @@
 <template>
     <div class="tmpl">
-        <my-title title="新闻详情"></my-title>
+        <my-title title="图文介绍"></my-title>
         <div class="news-title">
             <p>{{news.title}}</p>
-            <div class="news-msg">
-                <span>{{news.click}}次点击</span>
-                <span>分类:民生经济</span>
-                <span>添加时间:{{news.add_time | format_date}}</span>
-            </div>
         </div>
         <div class="news-content" v-html="news.content"></div>
     </div>
@@ -20,14 +15,13 @@
             }
         },
         created() {
-            let id = this.$route.query.id;
+            let id = this.$route.params.id;
             this.axios.get('getnew/'+id)
             .then(res=>{
                 this.news = res.data.message[0];
-                // console.log(this.news);
             })
             .catch(err=>{
-                console.log('获取新闻详情失败');
+                console.log('获取商品图文介绍失败');
             })
         }
     }

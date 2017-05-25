@@ -59,7 +59,10 @@ const NewsList = r => require(['./components/news/newslist.vue'], r);
 const NewsDetail = r => require(['./components/news/detail.vue'], r);
 const PhotoShare = r => require(['./components/photo/share.vue'], r);
 const PhotoDetail = r => require(['./components/photo/detail.vue'], r);
-
+const GoodsList = r => require(['./components/goods/goodslist.vue'], r);
+const GoodsDetail = r => require(['./components/goods/goodsdetail.vue'], r);
+const GoodsComment = r => require(['./components/goods/goodscomment.vue'], r);
+const GoodsInfo = r => require(['./components/goods/goodsinfo.vue'], r);
 
 // 设置导航按钮点击高亮样式
 let router = new VueRouter({
@@ -77,6 +80,10 @@ router.addRoutes([
     { name: 'newsdetail', path: '/news/detail', component: NewsDetail },
     { name: 'photoshare', path: '/photo/share', component: PhotoShare },
     { name: 'photodetail', path: '/photo/detail', component: PhotoDetail },
+    { name: 'goods', path: '/goods/list', component: GoodsList },
+    { name: 'goodsdetail', path: '/goods/detail/:id', component: GoodsDetail },
+    { name: 'goodsinfo', path: '/goods/info/:id', component: GoodsInfo },
+    { name: 'goodscomment', path: '/goods/comment/:id', component: GoodsComment }
 ]);
 
 new Vue({

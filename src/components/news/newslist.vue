@@ -8,9 +8,9 @@
 		</header> -->
 		<div class="news-wrap">
 			<ul class="mui-table-view">
-				<li class="mui-table-view-cell mui-media" v-for="(msg,index) in msgs" :key="index">
+				<li class="mui-table-view-cell mui-media" v-for="(msg,index) in msgs" :key="index" >
 					<router-link :to="{name:'newsdetail', query:{id: msg.id}}">
-						<img class="mui-media-object mui-pull-left" :src="msg.img_url">
+						<img class="mui-media-object mui-pull-left" :src="msg.img_url" v-lazy="msg.img_url">
 						<div class="mui-media-body">
 							{{msg.title}}
 							<div class='mui-ellipsis'>
@@ -52,6 +52,11 @@
 <style scoped>
 	.tmpl {
 		margin-top: 84px;
+	}
+	image[lazy=loading] {
+		width: 40px;
+		height: 300px;
+		margin: auto;
 	}
 	.mui-media-body {
 		font-size: 14px;
