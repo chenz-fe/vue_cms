@@ -1,82 +1,99 @@
-const htmlWebpackPlugin = require('html-webpack-plugin'); //生成html
+'use strict';
+const htmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin"); //分离css
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin'); //压缩js
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
     //入口
     entry: {
         main: './src/main.js',
-        //单独再指定一个入口，将这个入口内人所有第三方包，作为公共资源抽取出来
-        vendor: ['vue', 'vue-router', 'vue-resource', 'vue-preview'],
+        vendor: ['vue', 'vue-router', 'axios', 'mint-ui', 'moment', 'vue-preview'], //第三方库
     },
-    //出口
+
     output: {
-        path: __dirname + '/dist/',
+        path: __dirname + '/dist/'
     },
-    //模块
+
     module: {
         loaders: [{
             test: /.css$/,
             use: ExtractTextPlugin.extract({
-                fallback: "style-loader", //最终回路
-                use: ['css-loader', 'autoprefixer-loader']
+                fallback: "style-loader", //最终的回路使用style-loader
+                use: ["css-loader", 'autoprefixer-loader']
             })
         }, {
             test: /.less$/,
             use: ExtractTextPlugin.extract({
-                fallback: "style-loader", //最终回路
-                use: ['css-loader', 'autoprefixer-loader', 'less-loader']
+                fallback: "style-loader", //最终的回路使用style-loader
+                use: ["css-loader", 'autoprefixer-loader', 'less-loader']
             })
+        }, {
+            test: /.(jpg|png|ttf|svg|bmp|gif|eot|woff|woff2)$/,
+            loader: 'url-loader?limit=4096',
         }, {
             test: /.js$/,
             exclude: /node_modules/,
             loader: 'babel-loader',
             options: {
                 presets: ['es2015'],
-                plugins: ['transform-runtime'],
+                plugins: ['transform-runtime']
             }
         }, {
             test: /.vue$/,
-            loader: 'vue-loader'
-        }, {
-            test: /.(png|jpg|svg|ttf|gif|jpeg)$/,
-            loader: 'url-loader?limit=4096'
+            loader: 'vue-loader', //vue-loader 依赖vue-template-compiler
+        }, { //如果是用vue-cli 脚手架生成的代码使用vue-preview的时候需要加上下面代码
+            test: /vue-preview.src.*?js$/,
+            loader: 'babel-loader',
+            options: {
+                presets: ['es2015'],
+                plugins: ['transform-runtime']
+            }
         }]
     },
-    plugins: [ //插件
-        new htmlWebpackPlugin({
-            template: './src/index.html',
+
+    plugins: [new htmlWebpackPlugin({
+            template: './src/index.html'
         }),
-        // 处理vue开发环境的控制台提示，告知vue当前是生产环境
+        new ExtractTextPlugin('[chunkhash].css'), //处理css，生成文件
+        //内置提取公共模块插件
+        new webpack.optimize.CommonsChunkPlugin({
+            names: ['vendor', 'minifast']
+                //minifast 不给一个清单文件，修改了main也仍然会导致vender的重新生成
+        }),
+        //内置插件完成js的压缩
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        }),
+        //声明全局的Jquery
+        // new webpack.ProvidePlugin({
+        //     $: 'jquery',
+        //     jQuery: 'jquery',
+        //     'window.jQuery': 'jquery',
+        //     'window.$': 'jquery',
+        // }),
+        //处理vue开发环境的提示，告知vue当前是生产环境
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: '"production"'
             }
-        }),
-        new ExtractTextPlugin("styles.css"),
-        //loader部分的操作配合该插件的使用
-
-        //声明公共插件
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['vendor', 'init'], //init也会生成一个文件，就是一个虚拟文件，记录着相关vendor与main之间的关系，如果main发生改变，只更新init.js文件，而第三方的可以不动
-        }),
-        //压缩
-        new UglifyJSPlugin(),
-    ]
-
+        })
+    ],
+    devServer: {
+        proxy: {
+            '/v2/*': {
+                target: 'https://api.douban.com/',
+                changeOrigin: true,
+            }
+        }
+    }
 }
 
-//初始的时候module.exports = exports
-//当module.exports = {};    exports 还是原来的对象
-
-//做判断
+// console.log(process.argv.length);
+//webpack-dev-server --line --hot
 if (process.argv.length === 5) {
     //webpack-dev-server启动的
     module.exports.output.filename = '[name].js';
-} else {
+} else { //webpack
     module.exports.output.filename = '[name].[chunkhash].js';
 }
-// console.log(process.argv); //命令行参数
-
-//判断如果是通过webpack  需要hash
-//如果是通过webpack-dev-.... 就不需要加上hash
