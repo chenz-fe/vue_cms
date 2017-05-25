@@ -110,7 +110,6 @@
            afterEnter() {
                 this.isShow = false;
            }
-
         }
     }
 </script>

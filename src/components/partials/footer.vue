@@ -27,11 +27,12 @@
 <script type="text/ecmascript-6">
 
 	import MyBus from '../common/myBus.js';
+	import ShopCartTools from '../common/shopcartools.js';
 
 	export default {
 		data() {
 			return {
-				buyNum:0
+				buyNum: ShopCartTools.getProdsCount()
 			};
 		},
 		created() {

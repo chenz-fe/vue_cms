@@ -43,7 +43,7 @@
         created() {
             let prods = ShopCartTools.getProds();
             // console.log(ShopCartTools);
-            console.log(prods);//Object {88: 4, 91: 3}
+            // console.log(prods);//Object {88: 4, 91: 3}
             // prods是一个对象，key是所有添加的商品的id，value是id对应的购买数量
             // Object.keys(prods)把对象所有的key取出来放进一个数组
             let ids = Object.keys(prods).join(',');
@@ -114,6 +114,19 @@
                     count,
                     totalprice
                 }
+            }
+        },
+        beforeRouteLeave(to, from, next) {
+            // 导航离开该组件的对应路由时调用
+            // 可以访问组件实例this
+            // 如果当前用户要离开，就会出发
+            // 如果否，取消锚点值改变行为，next(false)
+            if(confirm('亲，确定要离开购物车吗')){
+                next();
+                this.saveProds();//保存离开时的购物车数据
+                // 如果改变一次保存一次，会降低性能，所以可以选择在离开路由时统一保存
+            } else{
+                next(false);
             }
         }
     }

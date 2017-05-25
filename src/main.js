@@ -86,6 +86,13 @@ router.addRoutes([
     { name: 'goodscomment', path: '/goods/comment/:id', component: GoodsComment }
 ]);
 
+// 可以在路由进入前，加入权限判断，本项目不需要，以下为测试代码
+// router.beforeEach((to, from, next) => {
+//     console.log(to); // 如果不调用next，页面会卡住
+//     next(); //放行
+//     // next(false); // 取消当前锚点值的改变
+// })
+
 new Vue({
     el: '#app',
     router,
